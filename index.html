@@ -3,104 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StrongPDF Pro | Corporate Edition</title>
+    <title>StrongPDF Pro | Instant PDF Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
-        body { background-color: #0f172a; color: #f8fafc; }
-        .card { background-color: #1e293b; border: 1px solid #334155; transition: 0.3s; }
-        .card:hover { border-color: #3b82f6; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; }
+        .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+        .speed-gradient { background: linear-gradient(90deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-10">
-    <div class="max-w-5xl mx-auto">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-extrabold text-blue-500 tracking-tight">Strong<span class="text-white">PDF</span> PRO</h1>
-            <p class="text-slate-400 mt-2 text-sm uppercase tracking-widest font-semibold">Corporate & Powerful PDF Engine</p>
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-16">
+            <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase mb-4">
+                Strong<span class="text-blue-500">PDF</span> PRO
+            </h1>
+            <p class="text-xl md:text-2xl font-bold speed-gradient mb-2">
+                Stop Waiting. Start Splitting. ⚡
+            </p>
+            <p class="text-slate-400 text-lg font-medium">
+                Instant Multi-Page PDF Tools with Zero Upload Lag.
+            </p>
         </header>
 
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="card p-6 rounded-2xl shadow-2xl">
-                <div class="flex items-center mb-4">
-                    <span class="bg-blue-600 p-2 rounded-lg mr-3">🔗</span>
-                    <h2 class="text-xl font-bold">Merge with Order</h2>
+        <div class="grid md:grid-cols-2 gap-10">
+            <div class="card p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="flex items-center mb-6">
+                    <div class="bg-blue-600/20 p-3 rounded-2xl mr-4 text-2xl">🔗</div>
+                    <h2 class="text-2xl font-bold">Fast Merge</h2>
                 </div>
-                <p class="text-slate-400 text-sm mb-4">Files will be merged in the order they appear below.</p>
-                <input type="file" id="mergeFiles" multiple class="block w-full text-sm text-slate-400 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
-                <div id="fileList" class="text-xs text-blue-400 mb-4 space-y-1"></div>
-                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Merge All Files</button>
+                <p class="text-slate-400 mb-6 text-sm">Professional tools without the wait. Merge large files instantly.</p>
+                
+                <input type="file" id="mergeFiles" multiple class="block w-full text-sm text-slate-500 mb-6 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                
+                <div id="fileList" class="text-xs text-blue-400 mb-6 space-y-2 bg-slate-900/60 p-4 rounded-xl hidden border border-slate-700"></div>
+                
+                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-900/20">
+                    MERGE ALL FILES ⚡
+                </button>
             </div>
 
-            <div class="card p-6 rounded-2xl shadow-2xl">
-                <div class="flex items-center mb-4">
-                    <span class="bg-green-600 p-2 rounded-lg mr-3">✂️</span>
-                    <h2 class="text-xl font-bold">Full Page Split</h2>
+            <div class="card p-8 rounded-3xl shadow-2xl border-t-4 border-t-blue-500">
+                <div class="flex items-center mb-6">
+                    <div class="bg-blue-500/20 p-3 rounded-2xl mr-4 text-2xl">✂️</div>
+                    <h2 class="text-2xl font-bold">Instant Split</h2>
                 </div>
-                <p class="text-slate-400 text-sm mb-4">Every page will be downloaded as a separate individual PDF.</p>
-                <input type="file" id="splitFile" class="block w-full text-sm text-slate-400 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer">
-                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-green-600 py-3 rounded-xl font-bold hover:bg-green-700 transition">Split & Download All</button>
+                <p class="text-slate-400 mb-6 text-sm">No queues, no uploading wait-times—just pure speed splitting.</p>
+                
+                <input type="file" id="splitFile" class="block w-full text-sm text-slate-500 mb-6 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer">
+                
+                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-blue-500 py-4 rounded-2xl font-black text-lg hover:bg-blue-600 transition shadow-lg shadow-blue-900/20">
+                    SPLIT & DOWNLOAD ⚡
+                </button>
             </div>
         </div>
 
-        <footer class="mt-20 text-center text-slate-500 text-xs italic">
-            StrongPDF Engine v2.0 - Client-Side Encryption Enabled.
+        <footer class="mt-24 text-center border-t border-slate-800 pt-10">
+            <p class="text-slate-500 font-bold tracking-widest text-xs uppercase mb-4">StrongPDF PRO // Performance Engine v2.3</p>
+            <a href="mailto:your-email@example.com?subject=StrongPDF Feedback" class="inline-flex items-center text-blue-400 hover:text-blue-300 font-bold transition">
+                <span class="mr-2">📩</span> SUPPORT & FEEDBACK
+            </a>
         </footer>
     </div>
 
     <script>
         const { PDFDocument } = PDFLib;
 
-        // Show file list for merging so user knows the order
-        document.getElementById('mergeFiles').addEventListener('change', function(e) {
+        // Sequence display for Merge
+        document.getElementById('mergeFiles').addEventListener('change', e => {
             const list = document.getElementById('fileList');
-            list.innerHTML = "<strong>Order:</strong><br>";
-            Array.from(e.target.files).forEach((file, index) => {
-                list.innerHTML += `${index + 1}. ${file.name}<br>`;
-            });
+            if(e.target.files.length > 0) {
+                list.classList.remove('hidden');
+                list.innerHTML = "<div class='text-slate-500 uppercase font-black mb-2'>Processing Order:</div>";
+                Array.from(e.target.files).forEach((f, i) => {
+                    list.innerHTML += `<div class="flex items-center"><span class="text-blue-500 mr-2 font-bold">${i+1}.</span> ${f.name}</div>`;
+                });
+            }
         });
 
         async function mergePDF() {
             const btn = document.getElementById('mergeBtn');
             const files = document.getElementById('mergeFiles').files;
-            if (files.length < 2) return alert("Select at least 2 files");
+            if (files.length < 2) return alert("Select 2+ files to merge.");
             
-            btn.innerText = "Processing...";
+            btn.innerText = "PROCESSING...";
             const mergedPdf = await PDFDocument.create();
-            for (const file of files) {
-                const pdf = await PDFDocument.load(await file.arrayBuffer());
-                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                copiedPages.forEach(page => mergedPdf.addPage(page));
+            for (const f of files) {
+                const pdf = await PDFDocument.load(await f.arrayBuffer());
+                const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                pages.forEach(p => mergedPdf.addPage(p));
             }
-            const bytes = await mergedPdf.save();
-            download(bytes, "StrongPDF_Merged.pdf");
-            btn.innerText = "Merge All Files";
+            download(await mergedPdf.save(), "StrongPDF_Merged.pdf");
+            btn.innerText = "MERGE ALL FILES ⚡";
         }
 
         async function splitAllPages() {
             const btn = document.getElementById('splitBtn');
             const file = document.getElementById('splitFile').files[0];
-            if (!file) return alert("Select a file first");
+            if (!file) return alert("Please select a PDF file.");
 
-            btn.innerText = "Splitting...";
-            const sourcePdf = await PDFDocument.load(await file.arrayBuffer());
-            const totalPages = sourcePdf.getPageCount();
+            btn.innerText = "SPLITTING...";
+            const src = await PDFDocument.load(await file.arrayBuffer());
+            const total = src.getPageCount();
 
-            for (let i = 0; i < totalPages; i++) {
+            for (let i = 0; i < total; i++) {
                 const newPdf = await PDFDocument.create();
-                const [page] = await newPdf.copyPages(sourcePdf, [i]);
-                newPdf.addPage(page);
-                const bytes = await newPdf.save();
-                download(bytes, `Page_${i + 1}_of_${file.name}`);
+                const [p] = await newPdf.copyPages(src, [i]);
+                newPdf.addPage(p);
+                download(await newPdf.save(), `Page_${i+1}_of_${file.name}`);
             }
-            btn.innerText = "Split & Download All";
+            btn.innerText = "SPLIT & DOWNLOAD ⚡";
         }
 
         function download(bytes, filename) {
-            const blob = new Blob([bytes], { type: "application/pdf" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            link.click();
+            const b = new Blob([bytes], { type: "application/pdf" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(b);
+            a.download = filename;
+            a.click();
         }
     </script>
 </body>
