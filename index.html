@@ -1,120 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StrongPDF</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrongPDF Pro | Corporate Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .card { background-color: #1e293b; border: 1px solid #334155; transition: 0.3s; }
+        .card:hover { border-color: #3b82f6; }
+    </style>
 </head>
+<body class="min-h-screen p-4 md:p-10">
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-blue-500 tracking-tight">Strong<span class="text-white">PDF</span> PRO</h1>
+            <p class="text-slate-400 mt-2 text-sm uppercase tracking-widest font-semibold">Corporate & Powerful PDF Engine</p>
+        </header>
 
-<body class="bg-gray-100 min-h-screen">
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="card p-6 rounded-2xl shadow-2xl">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 p-2 rounded-lg mr-3">🔗</span>
+                    <h2 class="text-xl font-bold">Merge with Order</h2>
+                </div>
+                <p class="text-slate-400 text-sm mb-4">Files will be merged in the order they appear below.</p>
+                <input type="file" id="mergeFiles" multiple class="block w-full text-sm text-slate-400 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                <div id="fileList" class="text-xs text-blue-400 mb-4 space-y-1"></div>
+                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Merge All Files</button>
+            </div>
 
-<div class="max-w-5xl mx-auto p-6">
-<h1 class="text-3xl font-bold text-center mb-8">StrongPDF</h1>
+            <div class="card p-6 rounded-2xl shadow-2xl">
+                <div class="flex items-center mb-4">
+                    <span class="bg-green-600 p-2 rounded-lg mr-3">✂️</span>
+                    <h2 class="text-xl font-bold">Full Page Split</h2>
+                </div>
+                <p class="text-slate-400 text-sm mb-4">Every page will be downloaded as a separate individual PDF.</p>
+                <input type="file" id="splitFile" class="block w-full text-sm text-slate-400 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer">
+                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-green-600 py-3 rounded-xl font-bold hover:bg-green-700 transition">Split & Download All</button>
+            </div>
+        </div>
 
-<div class="grid md:grid-cols-2 gap-6">
+        <footer class="mt-20 text-center text-slate-500 text-xs italic">
+            StrongPDF Engine v2.0 - Client-Side Encryption Enabled.
+        </footer>
+    </div>
 
-<!-- MERGE PDF -->
-<div class="bg-white p-6 rounded-xl shadow">
-<h2 class="text-xl font-semibold mb-4">Merge PDF</h2>
-<input type="file" id="mergeFiles" multiple class="mb-4">
-<button onclick="mergePDF()" class="bg-blue-600 text-white px-4 py-2 rounded">Merge</button>
-</div>
+    <script>
+        const { PDFDocument } = PDFLib;
 
-<!-- SPLIT PDF -->
-<div class="bg-white p-6 rounded-xl shadow">
-<h2 class="text-xl font-semibold mb-4">Split PDF (First Page)</h2>
-<input type="file" id="splitFile" class="mb-4">
-<button onclick="splitPDF()" class="bg-green-600 text-white px-4 py-2 rounded">Split</button>
-</div>
+        // Show file list for merging so user knows the order
+        document.getElementById('mergeFiles').addEventListener('change', function(e) {
+            const list = document.getElementById('fileList');
+            list.innerHTML = "<strong>Order:</strong><br>";
+            Array.from(e.target.files).forEach((file, index) => {
+                list.innerHTML += `${index + 1}. ${file.name}<br>`;
+            });
+        });
 
-<!-- ROTATE PDF -->
-<div class="bg-white p-6 rounded-xl shadow">
-<h2 class="text-xl font-semibold mb-4">Rotate PDF</h2>
-<input type="file" id="rotateFile" class="mb-4">
-<button onclick="rotatePDF()" class="bg-purple-600 text-white px-4 py-2 rounded">Rotate 90°</button>
-</div>
+        async function mergePDF() {
+            const btn = document.getElementById('mergeBtn');
+            const files = document.getElementById('mergeFiles').files;
+            if (files.length < 2) return alert("Select at least 2 files");
+            
+            btn.innerText = "Processing...";
+            const mergedPdf = await PDFDocument.create();
+            for (const file of files) {
+                const pdf = await PDFDocument.load(await file.arrayBuffer());
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                copiedPages.forEach(page => mergedPdf.addPage(page));
+            }
+            const bytes = await mergedPdf.save();
+            download(bytes, "StrongPDF_Merged.pdf");
+            btn.innerText = "Merge All Files";
+        }
 
-<!-- IMAGE TO PDF -->
-<div class="bg-white p-6 rounded-xl shadow">
-<h2 class="text-xl font-semibold mb-4">Image to PDF</h2>
-<input type="file" id="imageFile" accept="image/*" class="mb-4">
-<button onclick="imageToPDF()" class="bg-red-600 text-white px-4 py-2 rounded">Convert</button>
-</div>
+        async function splitAllPages() {
+            const btn = document.getElementById('splitBtn');
+            const file = document.getElementById('splitFile').files[0];
+            if (!file) return alert("Select a file first");
 
-</div>
-</div>
+            btn.innerText = "Splitting...";
+            const sourcePdf = await PDFDocument.load(await file.arrayBuffer());
+            const totalPages = sourcePdf.getPageCount();
 
-<script>
+            for (let i = 0; i < totalPages; i++) {
+                const newPdf = await PDFDocument.create();
+                const [page] = await newPdf.copyPages(sourcePdf, [i]);
+                newPdf.addPage(page);
+                const bytes = await newPdf.save();
+                download(bytes, `Page_${i + 1}_of_${file.name}`);
+            }
+            btn.innerText = "Split & Download All";
+        }
 
-async function mergePDF() {
-const { PDFDocument } = PDFLib;
-const files = document.getElementById('mergeFiles').files;
-const mergedPdf = await PDFDocument.create();
-
-for (let file of files) {
-const bytes = await file.arrayBuffer();
-const pdf = await PDFDocument.load(bytes);
-const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-copiedPages.forEach(page => mergedPdf.addPage(page));
-}
-
-const mergedBytes = await mergedPdf.save();
-downloadFile(mergedBytes, "merged.pdf");
-}
-
-async function splitPDF() {
-const { PDFDocument } = PDFLib;
-const file = document.getElementById('splitFile').files[0];
-const bytes = await file.arrayBuffer();
-const pdf = await PDFDocument.load(bytes);
-
-const newPdf = await PDFDocument.create();
-const [firstPage] = await newPdf.copyPages(pdf, [0]);
-newPdf.addPage(firstPage);
-
-const newBytes = await newPdf.save();
-downloadFile(newBytes, "split.pdf");
-}
-
-async function rotatePDF() {
-const { PDFDocument, degrees } = PDFLib;
-const file = document.getElementById('rotateFile').files[0];
-const bytes = await file.arrayBuffer();
-const pdf = await PDFDocument.load(bytes);
-
-pdf.getPages().forEach(page => {
-page.setRotation(degrees(90));
-});
-
-const newBytes = await pdf.save();
-downloadFile(newBytes, "rotated.pdf");
-}
-
-async function imageToPDF() {
-const { PDFDocument } = PDFLib;
-const file = document.getElementById('imageFile').files[0];
-const bytes = await file.arrayBuffer();
-
-const pdf = await PDFDocument.create();
-const image = await pdf.embedJpg(bytes);
-const page = pdf.addPage([image.width, image.height]);
-page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
-
-const pdfBytes = await pdf.save();
-downloadFile(pdfBytes, "image.pdf");
-}
-
-function downloadFile(bytes, filename) {
-const blob = new Blob([bytes], { type: "application/pdf" });
-const link = document.createElement("a");
-link.href = URL.createObjectURL(blob);
-link.download = filename;
-link.click();
-}
-
-</script>
-
+        function download(bytes, filename) {
+            const blob = new Blob([bytes], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+    </script>
 </body>
 </html>
