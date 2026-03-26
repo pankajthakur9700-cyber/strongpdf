@@ -3,119 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StrongPDF Pro | Instant PDF Engine</title>
+    <title>StrongPDF Pro | Ultimate PDF Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; }
+        .card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; height: 100%; }
+        .card:hover { border-color: #3b82f6; }
         .speed-gradient { background: linear-gradient(90deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sortable-ghost { opacity: 0.4; background: #3b82f6 !important; }
-        .file-item { cursor: grab; transition: background 0.2s; }
-        .file-item:active { cursor: grabbing; }
+        .file-item { cursor: grab; background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #334155; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-10">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <header class="text-center mb-16">
             <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase mb-4">Strong<span class="text-blue-500">PDF</span> PRO</h1>
-            <p class="text-xl md:text-2xl font-bold speed-gradient mb-2">Stop Waiting. Start Splitting. ⚡</p>
-            <p class="text-slate-400 text-lg font-medium">Instant Multi-Page PDF Tools with Zero Upload Lag.</p>
+            <p class="text-xl font-bold speed-gradient">Ultimate Conversion Suite & Zero Upload Lag ⚡</p>
         </header>
 
-        <div class="grid md:grid-cols-2 gap-10">
-            <div class="card p-8 rounded-3xl shadow-2xl relative">
-                <div class="flex items-center mb-6">
-                    <div class="bg-blue-600/20 p-3 rounded-2xl mr-4 text-2xl">🔗</div>
-                    <h2 class="text-2xl font-bold">Fast Merge</h2>
-                </div>
-                <p class="text-slate-400 mb-6 text-sm">Select files and drag to reorder. 1st stays on top.</p>
-                
-                <input type="file" id="mergeFiles" multiple class="block w-full text-sm text-slate-500 mb-6 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
-                
-                <div id="fileList" class="text-sm text-blue-400 mb-6 space-y-2 bg-slate-900/60 p-4 rounded-xl hidden border border-slate-700 min-h-[50px]">
-                    </div>
-                
-                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-900/20">MERGE ALL FILES ⚡</button>
+        <div class="grid md:grid-cols-3 gap-8">
+            
+            <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-600">
+                <h2 class="text-xl font-bold mb-4 flex items-center">🔗 Merge & Reorder</h2>
+                <input type="file" id="mergeFiles" multiple accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-600 file:text-white file:border-0 cursor-pointer">
+                <div id="fileList" class="max-h-40 overflow-y-auto mb-4 hidden"></div>
+                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">MERGE FILES ⚡</button>
             </div>
 
-            <div class="card p-8 rounded-3xl shadow-2xl border-t-4 border-t-blue-500">
-                <div class="flex items-center mb-6">
-                    <div class="bg-blue-500/20 p-3 rounded-2xl mr-4 text-2xl">✂️</div>
-                    <h2 class="text-2xl font-bold">Instant Split</h2>
-                </div>
-                <p class="text-slate-400 mb-6 text-sm">No queues, no uploading—just pure speed.</p>
-                <input type="file" id="splitFile" class="block w-full text-sm text-slate-500 mb-6 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer">
-                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-blue-500 py-4 rounded-2xl font-black text-lg hover:bg-blue-600 transition shadow-lg shadow-blue-900/20">SPLIT & DOWNLOAD ⚡</button>
+            <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-400">
+                <h2 class="text-xl font-bold mb-4 flex items-center">✂️ Instant Split</h2>
+                <input type="file" id="splitFile" accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-400 file:text-white file:border-0 cursor-pointer">
+                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-blue-400 py-3 rounded-xl font-bold hover:bg-blue-500 transition text-slate-900">SPLIT ALL PAGES ⚡</button>
             </div>
+
+            <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-emerald-500">
+                <h2 class="text-xl font-bold mb-4 flex items-center">🖼️ JPG to PDF</h2>
+                <input type="file" id="jpgInput" multiple accept="image/jpeg,image/png" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-emerald-500 file:text-white file:border-0 cursor-pointer">
+                <button onclick="convertJpgToPdf()" id="jpgBtn" class="w-full bg-emerald-500 py-3 rounded-xl font-bold hover:bg-emerald-600 transition text-slate-900">CONVERT IMAGES ⚡</button>
+            </div>
+
         </div>
+
+        <div class="mt-12 grid md:grid-cols-4 gap-4 opacity-60">
+            <div class="bg-slate-800 p-4 rounded-xl text-center text-xs font-bold border border-slate-700">WORD TO PDF ⏳</div>
+            <div class="bg-slate-800 p-4 rounded-xl text-center text-xs font-bold border border-slate-700">EXCEL TO PDF ⏳</div>
+            <div class="bg-slate-800 p-4 rounded-xl text-center text-xs font-bold border border-slate-700">PDF TO JPG ⏳</div>
+            <div class="bg-slate-800 p-4 rounded-xl text-center text-xs font-bold border border-slate-700">PPT TO PDF ⏳</div>
+        </div>
+
+        <footer class="mt-20 text-center text-slate-500 text-xs font-bold">
+            STRONGPDF PRO // PERFORMANCE ENGINE v2.4 // AI-POWERED 🤖
+        </footer>
     </div>
 
     <script>
         const { PDFDocument } = PDFLib;
-        let selectedFiles = [];
+        let selectedMergeFiles = [];
 
-        // Handle File Selection
+        // --- MERGE LOGIC ---
         document.getElementById('mergeFiles').addEventListener('change', e => {
             const list = document.getElementById('fileList');
-            selectedFiles = Array.from(e.target.files);
-            
-            if(selectedFiles.length > 0) {
+            selectedMergeFiles = Array.from(e.target.files);
+            if(selectedMergeFiles.length > 0) {
                 list.classList.remove('hidden');
-                renderList();
+                renderMergeList();
             }
         });
 
-        // Function to show draggable list
-        function renderList() {
+        function renderMergeList() {
             const list = document.getElementById('fileList');
             list.innerHTML = "";
-            selectedFiles.forEach((f, i) => {
+            selectedMergeFiles.forEach((f, i) => {
                 const item = document.createElement('div');
-                item.className = "file-item flex items-center bg-slate-800 p-3 rounded-lg border border-slate-700 hover:border-blue-500";
+                item.className = "file-item flex justify-between items-center";
                 item.setAttribute('data-id', i);
-                item.innerHTML = `<span class="handle mr-3 text-slate-500">⠿</span> <span class="text-blue-500 mr-2 font-bold">${i+1}.</span> ${f.name}`;
+                item.innerHTML = `<span><span class="text-blue-500 mr-2">${i+1}.</span>${f.name}</span>`;
                 list.appendChild(item);
             });
-
-            // Initialize Sortable
-            new Sortable(list, {
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                onEnd: function() {
-                    const newOrder = [];
-                    list.querySelectorAll('.file-item').forEach(el => {
-                        const index = el.getAttribute('data-id');
-                        newOrder.push(selectedFiles[index]);
-                    });
-                    selectedFiles = newOrder; // Order updated
-                    renderList(); // Refresh numbers
-                }
-            });
+            new Sortable(list, { animation: 150, onEnd: () => {
+                const newOrder = [];
+                list.querySelectorAll('.file-item').forEach(el => newOrder.push(selectedMergeFiles[el.getAttribute('data-id')]));
+                selectedMergeFiles = newOrder;
+                renderMergeList();
+            }});
         }
 
         async function mergePDF() {
-            const btn = document.getElementById('mergeBtn');
-            if (selectedFiles.length < 2) return alert("Select 2+ files.");
-            
-            btn.innerText = "MERGING INSTANTLY...";
+            if (selectedMergeFiles.length < 2) return alert("Select 2+ files.");
             const mergedPdf = await PDFDocument.create();
-            for (const f of selectedFiles) {
+            for (const f of selectedMergeFiles) {
                 const pdf = await PDFDocument.load(await f.arrayBuffer());
                 const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
                 pages.forEach(p => mergedPdf.addPage(p));
             }
-            const bytes = await mergedPdf.save();
-            download(bytes, "StrongPDF_Merged.pdf");
-            btn.innerText = "MERGE ALL FILES ⚡";
+            download(await mergedPdf.save(), "StrongPDF_Merged.pdf");
         }
 
+        // --- SPLIT LOGIC ---
         async function splitAllPages() {
-            const btn = document.getElementById('splitBtn');
             const file = document.getElementById('splitFile').files[0];
-            if (!file) return;
-            btn.innerText = "SPLITTING...";
+            if (!file) return alert("Select a PDF.");
             const src = await PDFDocument.load(await file.arrayBuffer());
             for (let i = 0; i < src.getPageCount(); i++) {
                 const newPdf = await PDFDocument.create();
@@ -123,7 +111,24 @@
                 newPdf.addPage(p);
                 download(await newPdf.save(), `Page_${i+1}_${file.name}`);
             }
-            btn.innerText = "SPLIT & DOWNLOAD ⚡";
+        }
+
+        // --- JPG TO PDF LOGIC (New!) ---
+        async function convertJpgToPdf() {
+            const files = document.getElementById('jpgInput').files;
+            if (files.length === 0) return alert("Select images first.");
+            
+            const pdfDoc = await PDFDocument.create();
+            for (const file of files) {
+                const imgBytes = await file.arrayBuffer();
+                let img;
+                if (file.type === "image/jpeg") img = await pdfDoc.embedJpg(imgBytes);
+                else img = await pdfDoc.embedPng(imgBytes);
+
+                const page = pdfDoc.addPage([img.width, img.height]);
+                page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+            }
+            download(await pdfDoc.save(), "StrongPDF_Images.pdf");
         }
 
         function download(bytes, filename) {
