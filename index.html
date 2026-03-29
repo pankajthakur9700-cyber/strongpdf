@@ -9,75 +9,84 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; height: 100%; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; height: 100%; display: flex; flex-direction: column; }
         .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
         .speed-gradient { background: linear-gradient(90deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .file-item { cursor: grab; background: #0f172a; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; }
         #previewContainer iframe { border-radius: 15px; border: 2px solid #334155; background: white; }
+        .btn-primary { width: 100%; py-3 rounded-xl font-bold transition shadow-lg mt-auto; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-10">
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-12">
             <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase mb-2">Strong<span class="text-blue-500">PDF</span> PRO</h1>
-            <p class="text-xl font-bold speed-gradient mb-4">Stop Waiting. Start Splitting. ⚡</p>
-            <p class="text-slate-400 max-w-2xl mx-auto text-sm text-balance">Professional-grade PDF tools with zero upload lag. Your files never leave your browser, ensuring 100% privacy and lightning speed.</p>
+            <p class="text-xl font-bold speed-gradient mb-4">Stop Waiting. Start Processing. ⚡</p>
+            <p class="text-slate-400 max-w-2xl mx-auto text-sm">Professional PDF tools with zero upload lag. Local browser-side processing for 100% privacy.</p>
         </header>
 
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-600">
-                <h2 class="text-xl font-bold mb-4 flex items-center">🔗 Merge & Preview</h2>
-                <p class="text-xs text-slate-400 mb-4">Drag to reorder files. Click preview to verify before merging.</p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            
+            <div class="card p-6 rounded-3xl border-t-4 border-t-blue-600">
+                <h2 class="text-lg font-bold mb-3">🔗 Merge & Preview</h2>
+                <p class="text-xs text-slate-400 mb-4">Drag to reorder. Preview before combining.</p>
                 <input type="file" id="mergeFiles" multiple accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-600 file:text-white file:border-0 cursor-pointer">
-                <div id="fileList" class="max-h-60 overflow-y-auto mb-4 hidden border-b border-slate-700 pb-4"></div>
-                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">MERGE FILES ⚡</button>
+                <div id="fileList" class="max-h-40 overflow-y-auto mb-4 hidden border-b border-slate-700 pb-2"></div>
+                <button onclick="mergePDF()" id="mergeBtn" class="btn-primary bg-blue-600 hover:bg-blue-700">MERGE ⚡</button>
             </div>
 
-            <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-400">
-                <h2 class="text-xl font-bold mb-4 flex items-center">✂️ Instant Split</h2>
-                <p class="text-xs text-slate-400 mb-4">No waiting. Split every page into separate files in one click.</p>
+            <div class="card p-6 rounded-3xl border-t-4 border-t-blue-400">
+                <h2 class="text-lg font-bold mb-3">✂️ Instant Split</h2>
+                <p class="text-xs text-slate-400 mb-4">Extract every page into individual files instantly.</p>
                 <input type="file" id="splitFile" accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-400 file:text-white file:border-0 cursor-pointer">
-                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-blue-400 py-3 rounded-xl font-bold hover:bg-blue-500 transition text-slate-900">SPLIT ALL PAGES ⚡</button>
+                <button onclick="splitAllPages()" id="splitBtn" class="btn-primary bg-blue-400 hover:bg-blue-500 text-slate-900">SPLIT ALL ⚡</button>
             </div>
 
-            <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-emerald-500">
-                <h2 class="text-xl font-bold mb-4 flex items-center">🖼️ JPG to PDF</h2>
-                <p class="text-xs text-slate-400 mb-4">Convert images into a single professional PDF document instantly.</p>
-                <input type="file" id="jpgInput" multiple accept="image/jpeg,image/png" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-emerald-500 file:text-white file:border-0 cursor-pointer">
-                <button onclick="convertJpgToPdf()" id="jpgBtn" class="w-full bg-emerald-500 py-3 rounded-xl font-bold hover:bg-emerald-600 transition text-slate-900">CONVERT IMAGES ⚡</button>
+            <div class="card p-6 rounded-3xl border-t-4 border-t-orange-500">
+                <h2 class="text-lg font-bold mb-3">📉 Compress PDF</h2>
+                <p class="text-xs text-slate-400 mb-4">Reduce file size while optimized for web viewing.</p>
+                <input type="file" id="compressFile" accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-orange-500 file:text-white file:border-0 cursor-pointer">
+                <button onclick="compressPDF()" id="compressBtn" class="btn-primary bg-orange-500 hover:bg-orange-600 text-slate-900">COMPRESS ⚡</button>
             </div>
+
+            <div class="card p-6 rounded-3xl border-t-4 border-t-emerald-500">
+                <h2 class="text-lg font-bold mb-3">🖼️ JPG to PDF</h2>
+                <p class="text-xs text-slate-400 mb-4">Convert images to professional PDF documents.</p>
+                <input type="file" id="jpgInput" multiple accept="image/jpeg,image/png" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-emerald-500 file:text-white file:border-0 cursor-pointer">
+                <button onclick="convertJpgToPdf()" id="jpgBtn" class="btn-primary bg-emerald-500 hover:bg-emerald-600 text-slate-900">CONVERT ⚡</button>
+            </div>
+
         </div>
 
         <div class="grid md:grid-cols-2 gap-8 mb-12">
             <section class="bg-slate-800/50 p-8 rounded-3xl border border-slate-700">
-                <h2 class="text-2xl font-bold mb-4 text-blue-400">How It Works?</h2>
+                <h2 class="text-2xl font-bold mb-4 text-blue-400 italic">Fast & Secure</h2>
                 <p class="text-slate-300 leading-relaxed text-sm">
-                    StrongPDF PRO eliminates the slow "upload and wait" cycle. By using advanced client-side technology, your documents are processed directly in your browser. This means large files are merged or split in real-time without the lag of server-side queues.
+                    StrongPDF PRO processes everything locally. Your files are never sent to a server, ensuring 100% privacy and no upload waiting times.
                 </p>
             </section>
-
             <section class="bg-slate-800/50 p-8 rounded-3xl border border-slate-700">
-                <h2 class="text-2xl font-bold mb-4 text-blue-400">About Our Mission</h2>
+                <h2 class="text-2xl font-bold mb-4 text-blue-400 italic">Tutorial</h2>
                 <p class="text-slate-300 leading-relaxed text-sm">
-                    Our goal is to provide fast, secure, and accessible PDF tools for everyone. We believe that document management should be seamless and private. StrongPDF PRO ensures your sensitive data stays on your device while providing the performance of local software.
+                    1. Select your tool. 2. Choose your files. 3. Reorder or preview if needed. 4. Click the action button for an instant download.
                 </p>
             </section>
         </div>
 
         <div id="previewWrapper" class="hidden">
-            <h3 class="text-2xl font-bold mb-4 text-blue-400 flex items-center italic underline px-4">Live Preview Window:</h3>
-            <div id="previewContainer" class="w-full h-[600px] bg-slate-900 rounded-3xl overflow-hidden shadow-inner border border-slate-700">
+            <h3 class="text-xl font-bold mb-4 text-blue-400 px-4 italic underline">Live Preview Window:</h3>
+            <div id="previewContainer" class="w-full h-[500px] bg-slate-900 rounded-3xl overflow-hidden border border-slate-700">
                 <iframe id="pdfViewer" class="w-full h-full"></iframe>
             </div>
         </div>
 
         <footer class="mt-20 text-center text-slate-500 text-xs font-bold pb-10">
-            <p class="mb-6 tracking-widest uppercase">STRONGPDF PRO // PERFORMANCE ENGINE v2.7 // AI-POWERED 🤖</p>
+            <p class="mb-6 tracking-widest uppercase">STRONGPDF PRO // PERFORMANCE ENGINE v2.9 // AI-POWERED 🤖</p>
             <div class="flex justify-center space-x-6 text-blue-400 text-sm">
-                <a href="javascript:void(0)" onclick="showPrivacy()" class="underline hover:text-blue-300">Privacy Policy</a>
-                <a href="javascript:void(0)" onclick="showTerms()" class="underline hover:text-blue-300">Terms of Service</a>
-                <a href="mailto:support@strongpdf.vercel.app" class="underline hover:text-blue-300">Contact Us</a>
+                <a href="javascript:void(0)" onclick="showPrivacy()" class="underline">Privacy Policy</a>
+                <a href="javascript:void(0)" onclick="showTerms()" class="underline">Terms of Service</a>
+                <a href="mailto:support@strongpdf.vercel.app" class="underline">Contact Us</a>
             </div>
         </footer>
     </div>
@@ -90,10 +99,7 @@
         document.getElementById('mergeFiles').addEventListener('change', e => {
             const list = document.getElementById('fileList');
             selectedMergeFiles = Array.from(e.target.files);
-            if(selectedMergeFiles.length > 0) {
-                list.classList.remove('hidden');
-                renderMergeList();
-            }
+            if(selectedMergeFiles.length > 0) { list.classList.remove('hidden'); renderMergeList(); }
         });
 
         function renderMergeList() {
@@ -103,20 +109,13 @@
                 const item = document.createElement('div');
                 item.className = "file-item";
                 item.setAttribute('data-id', i);
-                item.innerHTML = `
-                    <div class="flex items-center truncate">
-                        <span class="text-blue-500 mr-2 font-bold">${i+1}.</span>
-                        <span class="truncate w-32 md:w-48">${f.name}</span>
-                    </div>
-                    <button onclick="previewFile(${i})" class="ml-2 text-[10px] bg-slate-700 px-3 py-1.5 rounded-lg hover:bg-blue-600 transition uppercase font-bold">👁️ Preview</button>
-                `;
+                item.innerHTML = `<div class="flex items-center truncate"><span class="text-blue-500 mr-2 font-bold text-[10px]">${i+1}</span><span class="truncate w-32 text-[10px]">${f.name}</span></div><button onclick="previewFile(${i})" class="text-[9px] bg-slate-700 px-2 py-1 rounded hover:bg-blue-600 transition font-bold">VIEW</button>`;
                 list.appendChild(item);
             });
             new Sortable(list, { animation: 150, onEnd: () => {
                 const newOrder = [];
                 list.querySelectorAll('.file-item').forEach(el => newOrder.push(selectedMergeFiles[el.getAttribute('data-id')]));
-                selectedMergeFiles = newOrder;
-                renderMergeList();
+                selectedMergeFiles = newOrder; renderMergeList();
             }});
         }
 
@@ -125,8 +124,7 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const blob = new Blob([e.target.result], { type: 'application/pdf' });
-                const url = URL.createObjectURL(blob);
-                document.getElementById('pdfViewer').src = url;
+                document.getElementById('pdfViewer').src = URL.createObjectURL(blob);
                 document.getElementById('previewWrapper').classList.remove('hidden');
                 document.getElementById('previewWrapper').scrollIntoView({ behavior: 'smooth' });
             };
@@ -135,8 +133,7 @@
 
         async function mergePDF() {
             if (selectedMergeFiles.length < 2) return alert("Select 2+ files.");
-            const btn = document.getElementById('mergeBtn');
-            btn.innerText = "MERGING...";
+            const btn = document.getElementById('mergeBtn'); btn.innerText = "MERGING...";
             const mergedPdf = await PDFDocument.create();
             for (const f of selectedMergeFiles) {
                 const pdf = await PDFDocument.load(await f.arrayBuffer());
@@ -144,14 +141,13 @@
                 pages.forEach(p => mergedPdf.addPage(p));
             }
             download(await mergedPdf.save(), "StrongPDF_Merged.pdf");
-            btn.innerText = "MERGE FILES ⚡";
+            btn.innerText = "MERGE ⚡";
         }
 
         async function splitAllPages() {
             const file = document.getElementById('splitFile').files[0];
             if (!file) return alert("Select a PDF.");
-            const btn = document.getElementById('splitBtn');
-            btn.innerText = "SPLITTING...";
+            const btn = document.getElementById('splitBtn'); btn.innerText = "SPLITTING...";
             const src = await PDFDocument.load(await file.arrayBuffer());
             for (let i = 0; i < src.getPageCount(); i++) {
                 const newPdf = await PDFDocument.create();
@@ -159,14 +155,27 @@
                 newPdf.addPage(p);
                 download(await newPdf.save(), `Page_${i+1}_${file.name}`);
             }
-            btn.innerText = "SPLIT ALL PAGES ⚡";
+            btn.innerText = "SPLIT ALL ⚡";
+        }
+
+        // COMPRESS LOGIC (Optimized)
+        async function compressPDF() {
+            const file = document.getElementById('compressFile').files[0];
+            if (!file) return alert("Select a PDF to compress.");
+            const btn = document.getElementById('compressBtn'); btn.innerText = "COMPRESSING...";
+            
+            const pdfDoc = await PDFDocument.load(await file.arrayBuffer());
+            // PDF-Lib compression works by re-saving with optimized objects
+            const compressedBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+            
+            download(compressedBytes, `Compressed_${file.name}`);
+            btn.innerText = "COMPRESS ⚡";
         }
 
         async function convertJpgToPdf() {
             const files = document.getElementById('jpgInput').files;
-            if (files.length === 0) return alert("Select images first.");
-            const btn = document.getElementById('jpgBtn');
-            btn.innerText = "CONVERTING...";
+            if (files.length === 0) return alert("Select images.");
+            const btn = document.getElementById('jpgBtn'); btn.innerText = "CONVERTING...";
             const pdfDoc = await PDFDocument.create();
             for (const file of files) {
                 const imgBytes = await file.arrayBuffer();
@@ -175,23 +184,17 @@
                 page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
             }
             download(await pdfDoc.save(), "StrongPDF_Images.pdf");
-            btn.innerText = "CONVERT IMAGES ⚡";
+            btn.innerText = "CONVERT ⚡";
         }
 
         function download(bytes, filename) {
             const b = new Blob([bytes], { type: "application/pdf" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(b);
-            a.download = filename;
-            a.click();
+            const a = document.createElement("a"); a.href = URL.createObjectURL(b);
+            a.download = filename; a.click();
         }
 
-        function showPrivacy() {
-            alert("PRIVACY POLICY:\n1. 100% Local Processing: No files are uploaded to servers.\n2. Security: Documents never leave your computer.\n3. Cookies: Used for AdSense analytics only.");
-        }
-        function showTerms() {
-            alert("TERMS OF SERVICE:\n1. Free for all users.\n2. No liability for processed content.\n3. By using, you agree to local processing workflow.");
-        }
+        function showPrivacy() { alert("PRIVACY: All processing is local. Files never leave your browser."); }
+        function showTerms() { alert("TERMS: Free for personal/office use. You agree to local-processing workflow."); }
     </script>
 </body>
 </html>
