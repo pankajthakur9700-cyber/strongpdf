@@ -27,10 +27,16 @@
 
         <div class="grid md:grid-cols-3 gap-8 mb-12">
             <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-600">
-                <h2 class="text-xl font-bold mb-4 flex items-center">🔗 Merge & Preview</h2>
-                <p class="text-xs text-slate-400 mb-4">Drag to reorder files. Click preview to verify before merging.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold flex items-center">🔗 Merge & Preview</h2>
+                    <button id="clearAllBtn" onclick="clearAllFiles()" class="hidden text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition uppercase font-bold">Clear All</button>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">Drag to reorder. ✕ to remove. Click preview to verify.</p>
+                
                 <input type="file" id="mergeFiles" multiple accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-600 file:text-white file:border-0 cursor-pointer">
+                
                 <div id="fileList" class="max-h-60 overflow-y-auto mb-4 hidden border-b border-slate-700 pb-4"></div>
+                
                 <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">MERGE FILES ⚡</button>
             </div>
 
@@ -53,14 +59,14 @@
             <section class="bg-slate-800/50 p-8 rounded-3xl border border-slate-700">
                 <h2 class="text-2xl font-bold mb-4 text-blue-400">How It Works?</h2>
                 <p class="text-slate-300 leading-relaxed text-sm">
-                    StrongPDF PRO eliminates the slow "upload and wait" cycle. By using advanced client-side technology, your documents are processed directly in your browser. This means large files are merged or split in real-time without the lag of server-side queues.
+                    StrongPDF PRO eliminates the slow "upload and wait" cycle. Documents are processed directly in your browser. Large files are merged or split in real-time without the lag of server-side queues.
                 </p>
             </section>
 
             <section class="bg-slate-800/50 p-8 rounded-3xl border border-slate-700">
                 <h2 class="text-2xl font-bold mb-4 text-blue-400">About Our Mission</h2>
                 <p class="text-slate-300 leading-relaxed text-sm">
-                    Our goal is to provide fast, secure, and accessible PDF tools for everyone. We believe that document management should be seamless and private. StrongPDF PRO ensures your sensitive data stays on your device while providing the performance of local software.
+                    Our goal is to provide fast, secure, and accessible PDF tools for everyone. StrongPDF PRO ensures your sensitive data stays on your device while providing the performance of local software.
                 </p>
             </section>
         </div>
@@ -92,18 +98,27 @@
             if (files.length > 0) {
                 selectedMergeFiles = [...selectedMergeFiles, ...files];
                 document.getElementById('fileList').classList.remove('hidden');
+                document.getElementById('clearAllBtn').classList.remove('hidden');
                 renderMergeList();
-                e.target.value = ""; // Clear input to allow re-selecting same file
+                e.target.value = ""; 
             }
         });
 
         function renderMergeList() {
             const list = document.getElementById('fileList');
             list.innerHTML = "";
+            
+            if (selectedMergeFiles.length === 0) {
+                list.classList.add('hidden');
+                document.getElementById('clearAllBtn').classList.add('hidden');
+                return;
+            }
+
             selectedMergeFiles.forEach((f, i) => {
                 const item = document.createElement('div');
                 item.className = "file-item";
-                item.setAttribute('data-filename', f.name);
+                // ID maintain karne ke liye unique identifier
+                item.setAttribute('data-id', i);
                 item.innerHTML = `
                     <div class="flex items-center truncate">
                         <span class="text-blue-500 mr-2 font-bold">${i+1}.</span>
@@ -117,25 +132,33 @@
                 list.appendChild(item);
             });
             
-            // Re-init Sortable correctly
             new Sortable(list, { 
                 animation: 150, 
                 onEnd: () => {
                     const items = Array.from(list.children);
                     const newOrder = items.map(item => {
-                        const filename = item.getAttribute('data-filename');
-                        return selectedMergeFiles.find(f => f.name === filename);
+                        const idx = item.getAttribute('data-id');
+                        return selectedMergeFiles[idx];
                     });
                     selectedMergeFiles = newOrder;
-                    renderMergeList(); // Refresh numbers
+                    renderMergeList(); 
                 }
             });
         }
 
+        // --- NEW REMOVE FUNCTIONS ---
         function removeFile(index) {
             selectedMergeFiles.splice(index, 1);
-            if(selectedMergeFiles.length === 0) document.getElementById('fileList').classList.add('hidden');
             renderMergeList();
+        }
+
+        function clearAllFiles() {
+            if(confirm("Haqeeqat mein saari files hatani hain?")) {
+                selectedMergeFiles = [];
+                renderMergeList();
+                document.getElementById('previewWrapper').classList.add('hidden');
+                document.getElementById('pdfViewer').src = "";
+            }
         }
 
         function previewFile(index) {
@@ -152,11 +175,7 @@
         }
 
         async function mergePDF() {
-            if (selectedMergeFiles.length < 2) {
-                alert("Select 2+ files.");
-                return;
-            }
-            
+            if (selectedMergeFiles.length < 2) return alert("Kam se kam 2 files select karein.");
             const btn = document.getElementById('mergeBtn');
             btn.innerText = "MERGING...";
             btn.disabled = true;
@@ -172,7 +191,6 @@
                 const mergedPdfBytes = await mergedPdf.save();
                 download(mergedPdfBytes, "StrongPDF_Merged.pdf");
             } catch (error) {
-                console.error(error);
                 alert("Error merging PDFs.");
             } finally {
                 btn.innerText = "MERGE FILES ⚡";
@@ -196,20 +214,16 @@
                     const pdfBytes = await newPdf.save();
                     download(pdfBytes, `Page_${i+1}_${file.name}`);
                 }
-            } catch (error) {
-                alert("Error splitting PDF.");
-            } finally {
-                btn.innerText = "SPLIT ALL PAGES ⚡";
-            }
+            } catch (error) { alert("Error."); }
+            finally { btn.innerText = "SPLIT ALL PAGES ⚡"; }
         }
 
         async function convertJpgToPdf() {
             const fileInput = document.getElementById('jpgInput');
             const files = Array.from(fileInput.files);
-            if (files.length === 0) return alert("Select images first.");
+            if (files.length === 0) return alert("Select images.");
             const btn = document.getElementById('jpgBtn');
             btn.innerText = "CONVERTING...";
-
             try {
                 const pdfDoc = await PDFDocument.create();
                 for (const file of files) {
@@ -218,13 +232,9 @@
                     const page = pdfDoc.addPage([img.width, img.height]);
                     page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
                 }
-                const pdfBytes = await pdfDoc.save();
-                download(pdfBytes, "StrongPDF_Images.pdf");
-            } catch (error) {
-                alert("Error converting images.");
-            } finally {
-                btn.innerText = "CONVERT IMAGES ⚡";
-            }
+                download(await pdfDoc.save(), "StrongPDF_Images.pdf");
+            } catch (error) { alert("Error."); }
+            finally { btn.innerText = "CONVERT IMAGES ⚡"; }
         }
 
         function download(bytes, filename) {
@@ -236,8 +246,8 @@
             setTimeout(() => URL.revokeObjectURL(link.href), 100);
         }
 
-        function showPrivacy() { alert("PRIVACY POLICY:\n1. 100% Local Processing\n2. Documents never leave your computer."); }
-        function showTerms() { alert("TERMS OF SERVICE:\n1. Free for all users\n2. Local processing workflow."); }
+        function showPrivacy() { alert("PRIVACY: Local processing only."); }
+        function showTerms() { alert("TERMS: Free for everyone."); }
     </script>
 </body>
 </html>
