@@ -88,11 +88,12 @@
 
         // MERGE LOGIC
         document.getElementById('mergeFiles').addEventListener('change', e => {
-            const list = document.getElementById('fileList');
-            selectedMergeFiles = Array.from(e.target.files);
-            if(selectedMergeFiles.length > 0) {
-                list.classList.remove('hidden');
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                selectedMergeFiles = [...selectedMergeFiles, ...files];
+                document.getElementById('fileList').classList.remove('hidden');
                 renderMergeList();
+                e.target.value = ""; // Clear input to allow re-selecting same file
             }
         });
 
@@ -102,25 +103,39 @@
             selectedMergeFiles.forEach((f, i) => {
                 const item = document.createElement('div');
                 item.className = "file-item";
-                item.setAttribute('data-id', i);
+                item.setAttribute('data-filename', f.name);
                 item.innerHTML = `
                     <div class="flex items-center truncate">
                         <span class="text-blue-500 mr-2 font-bold">${i+1}.</span>
                         <span class="truncate w-32 md:w-48">${f.name}</span>
                     </div>
-                    <button onclick="previewFile(${i})" class="ml-2 text-[10px] bg-slate-700 px-3 py-1.5 rounded-lg hover:bg-blue-600 transition uppercase font-bold">👁️ Preview</button>
+                    <div class="flex gap-2">
+                        <button onclick="previewFile(${i})" class="text-[10px] bg-slate-700 px-3 py-1.5 rounded-lg hover:bg-blue-600 transition uppercase font-bold">👁️ Preview</button>
+                        <button onclick="removeFile(${i})" class="text-[10px] bg-red-900/50 text-red-200 px-3 py-1.5 rounded-lg hover:bg-red-600 transition uppercase font-bold">✕</button>
+                    </div>
                 `;
                 list.appendChild(item);
             });
-            new Sortable(list, { animation: 150, onEnd: () => {
-                const newOrder = [];
-                list.querySelectorAll('.file-item').forEach(el => {
-                    const index = el.getAttribute('data-id');
-                    newOrder.push(selectedMergeFiles[index]);
-                });
-                selectedMergeFiles = newOrder;
-                renderMergeList();
-            }});
+            
+            // Re-init Sortable correctly
+            new Sortable(list, { 
+                animation: 150, 
+                onEnd: () => {
+                    const items = Array.from(list.children);
+                    const newOrder = items.map(item => {
+                        const filename = item.getAttribute('data-filename');
+                        return selectedMergeFiles.find(f => f.name === filename);
+                    });
+                    selectedMergeFiles = newOrder;
+                    renderMergeList(); // Refresh numbers
+                }
+            });
+        }
+
+        function removeFile(index) {
+            selectedMergeFiles.splice(index, 1);
+            if(selectedMergeFiles.length === 0) document.getElementById('fileList').classList.add('hidden');
+            renderMergeList();
         }
 
         function previewFile(index) {
@@ -137,9 +152,12 @@
         }
 
         async function mergePDF() {
-            if (selectedMergeFiles.length < 2) return alert("Select 2+ files.");
+            if (selectedMergeFiles.length < 2) {
+                alert("Select 2+ files.");
+                return;
+            }
+            
             const btn = document.getElementById('mergeBtn');
-            const originalText = btn.innerText;
             btn.innerText = "MERGING...";
             btn.disabled = true;
 
@@ -155,9 +173,9 @@
                 download(mergedPdfBytes, "StrongPDF_Merged.pdf");
             } catch (error) {
                 console.error(error);
-                alert("Error merging PDFs. Please check if files are valid.");
+                alert("Error merging PDFs.");
             } finally {
-                btn.innerText = originalText;
+                btn.innerText = "MERGE FILES ⚡";
                 btn.disabled = false;
             }
         }
@@ -179,7 +197,6 @@
                     download(pdfBytes, `Page_${i+1}_${file.name}`);
                 }
             } catch (error) {
-                console.error(error);
                 alert("Error splitting PDF.");
             } finally {
                 btn.innerText = "SPLIT ALL PAGES ⚡";
@@ -197,21 +214,13 @@
                 const pdfDoc = await PDFDocument.create();
                 for (const file of files) {
                     const imgBytes = await file.arrayBuffer();
-                    let img;
-                    if (file.type === "image/jpeg" || file.type === "image/jpg") {
-                        img = await pdfDoc.embedJpg(imgBytes);
-                    } else if (file.type === "image/png") {
-                        img = await pdfDoc.embedPng(imgBytes);
-                    } else {
-                        continue; 
-                    }
+                    let img = file.type === "image/png" ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
                     const page = pdfDoc.addPage([img.width, img.height]);
                     page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
                 }
                 const pdfBytes = await pdfDoc.save();
                 download(pdfBytes, "StrongPDF_Images.pdf");
             } catch (error) {
-                console.error(error);
                 alert("Error converting images.");
             } finally {
                 btn.innerText = "CONVERT IMAGES ⚡";
@@ -227,12 +236,8 @@
             setTimeout(() => URL.revokeObjectURL(link.href), 100);
         }
 
-        function showPrivacy() {
-            alert("PRIVACY POLICY:\n1. 100% Local Processing: No files are uploaded to servers.\n2. Security: Documents never leave your computer.\n3. Cookies: Used for AdSense analytics only.");
-        }
-        function showTerms() {
-            alert("TERMS OF SERVICE:\n1. Free for all users.\n2. No liability for processed content.\n3. By using, you agree to local processing workflow.");
-        }
+        function showPrivacy() { alert("PRIVACY POLICY:\n1. 100% Local Processing\n2. Documents never leave your computer."); }
+        function showTerms() { alert("TERMS OF SERVICE:\n1. Free for all users\n2. Local processing workflow."); }
     </script>
 </body>
 </html>
