@@ -9,12 +9,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .card { background-color: #1e293b; border: 1px solid #334155; transition: all 0.3s ease; height: 100%; }
         .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
         .speed-gradient { background: linear-gradient(90deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .file-item { cursor: grab; background: #0f172a; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; }
         #previewContainer iframe { border-radius: 15px; border: 2px solid #334155; background: white; }
+        .rating-star { cursor: pointer; font-size: 1.5rem; transition: color 0.2s; color: #475569; }
+        .rating-star.active { color: #facc15; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-10">
@@ -25,34 +27,70 @@
             <p class="text-slate-400 max-w-2xl mx-auto text-sm text-balance">Professional-grade PDF tools with zero upload lag. Your files never leave your browser, ensuring 100% privacy and lightning speed.</p>
         </header>
 
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
             <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-600">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold flex items-center">🔗 Merge & Preview</h2>
                     <button id="clearAllBtn" onclick="clearAllFiles()" class="hidden text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition uppercase font-bold">Clear All</button>
                 </div>
-                <p class="text-xs text-slate-400 mb-4">Drag to reorder. ✕ to remove. Click preview to verify.</p>
                 <input type="file" id="mergeFiles" multiple accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-600 file:text-white file:border-0 cursor-pointer">
                 <div id="fileList" class="max-h-60 overflow-y-auto mb-4 hidden border-b border-slate-700 pb-4"></div>
-                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition">MERGE FILES ⚡</button>
+                <button onclick="mergePDF()" id="mergeBtn" class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-700 transition text-sm">MERGE FILES ⚡</button>
             </div>
 
             <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-blue-400">
                 <h2 class="text-xl font-bold mb-4 flex items-center">✂️ Instant Split</h2>
-                <p class="text-xs text-slate-400 mb-4">No waiting. Split every page into separate files in one click.</p>
                 <input type="file" id="splitFile" accept=".pdf" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-blue-400 file:text-white file:border-0 cursor-pointer">
-                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-blue-400 py-3 rounded-xl font-bold hover:bg-blue-500 transition text-slate-900">SPLIT ALL PAGES ⚡</button>
+                <button onclick="splitAllPages()" id="splitBtn" class="w-full bg-blue-400 py-3 rounded-xl font-bold hover:bg-blue-500 transition text-slate-900 text-sm">SPLIT ALL PAGES ⚡</button>
             </div>
 
             <div class="card p-6 rounded-3xl shadow-2xl border-t-4 border-t-emerald-500">
                 <h2 class="text-xl font-bold mb-4 flex items-center">🖼️ JPG to PDF</h2>
-                <p class="text-xs text-slate-400 mb-4">Convert images into a single professional PDF document instantly.</p>
                 <input type="file" id="jpgInput" multiple accept="image/jpeg,image/png" class="block w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-emerald-500 file:text-white file:border-0 cursor-pointer">
-                <button onclick="convertJpgToPdf()" id="jpgBtn" class="w-full bg-emerald-500 py-3 rounded-xl font-bold hover:bg-emerald-600 transition text-slate-900">CONVERT IMAGES ⚡</button>
+                <button onclick="convertJpgToPdf()" id="jpgBtn" class="w-full bg-emerald-500 py-3 rounded-xl font-bold hover:bg-emerald-600 transition text-slate-900 text-sm">CONVERT IMAGES ⚡</button>
             </div>
         </div>
 
-        <div id="previewWrapper" class="hidden">
+        <div class="grid md:grid-cols-2 gap-8 mb-16">
+            
+            <div class="card p-8 rounded-3xl border border-slate-700">
+                <h2 class="text-2xl font-bold mb-6 text-blue-400 flex items-center italic">📖 How to Use?</h2>
+                <ul class="space-y-4 text-slate-300 text-sm">
+                    <li class="flex items-start"><span class="bg-blue-500/20 text-blue-400 px-2 rounded mr-3 font-bold">1</span> Choose your tool (Merge, Split, or Convert).</li>
+                    <li class="flex items-start"><span class="bg-blue-500/20 text-blue-400 px-2 rounded mr-3 font-bold">2</span> Select your PDF or Image files from your computer.</li>
+                    <li class="flex items-start"><span class="bg-blue-500/20 text-blue-400 px-2 rounded mr-3 font-bold">3</span> Use 'Preview' to check or 'Drag' to change the order.</li>
+                    <li class="flex items-start"><span class="bg-blue-500/20 text-blue-400 px-2 rounded mr-3 font-bold">4</span> Click the action button and get your file instantly!</li>
+                </ul>
+            </div>
+
+            <div class="card p-8 rounded-3xl border border-slate-700 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2 text-emerald-400">Rate Your Experience</h2>
+                    <p class="text-slate-400 text-xs mb-6 italic">Thanks for using StrongPDF Pro! Your feedback helps us grow.</p>
+                    
+                    <div id="ratingBox">
+                        <input type="text" id="userName" placeholder="Your Name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 mb-4 text-sm outline-none focus:border-blue-500 transition">
+                        <div class="flex gap-2 mb-6" id="starContainer">
+                            <span class="rating-star" onclick="setRating(1)">★</span>
+                            <span class="rating-star" onclick="setRating(2)">★</span>
+                            <span class="rating-star" onclick="setRating(3)">★</span>
+                            <span class="rating-star" onclick="setRating(4)">★</span>
+                            <span class="rating-star" onclick="setRating(5)">★</span>
+                        </div>
+                        <button onclick="submitRating()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition">Submit Review</button>
+                    </div>
+
+                    <div id="thanksMessage" class="hidden text-center py-6">
+                        <div class="text-4xl mb-4 text-emerald-500">❤️</div>
+                        <h3 class="text-xl font-bold mb-2" id="displayThanksName">Thanks, User!</h3>
+                        <p class="text-slate-400 text-sm italic">"Thank you for choosing StrongPDF Pro. We're glad to have you here!"</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="previewWrapper" class="hidden mb-16">
             <h3 class="text-2xl font-bold mb-4 text-blue-400 flex items-center italic underline px-4">Live Preview Window:</h3>
             <div id="previewContainer" class="w-full h-[600px] bg-slate-900 rounded-3xl overflow-hidden shadow-inner border border-slate-700">
                 <iframe id="pdfViewer" class="w-full h-full"></iframe>
@@ -60,15 +98,42 @@
         </div>
 
         <footer class="mt-20 text-center text-slate-500 text-xs font-bold pb-10">
-            <p class="mb-6 tracking-widest uppercase text-blue-400/50">STRONGPDF PRO // PERFORMANCE ENGINE v2.7</p>
+            <p class="mb-6 tracking-widest uppercase">STRONGPDF PRO // PERFORMANCE ENGINE v2.8 // COMMUNITY POWERED ❤️</p>
+            <div class="flex justify-center space-x-6 text-blue-400 text-sm">
+                <a href="javascript:void(0)" onclick="showPrivacy()" class="underline hover:text-blue-300">Privacy Policy</a>
+                <a href="javascript:void(0)" onclick="showTerms()" class="underline hover:text-blue-300">Terms of Service</a>
+                <a href="mailto:support@strongpdf.vercel.app" class="underline hover:text-blue-300">Contact Us</a>
+            </div>
         </footer>
     </div>
 
     <script>
         const { PDFDocument } = PDFLib;
         let selectedMergeFiles = [];
+        let currentRating = 0;
 
-        // MERGE LOGIC
+        // --- RATING LOGIC ---
+        function setRating(n) {
+            currentRating = n;
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach((star, index) => {
+                if (index < n) star.classList.add('active');
+                else star.classList.remove('active');
+            });
+        }
+
+        function submitRating() {
+            const name = document.getElementById('userName').value.trim();
+            if (!name || currentRating === 0) {
+                alert("Please enter your name and select stars!");
+                return;
+            }
+            document.getElementById('ratingBox').classList.add('hidden');
+            document.getElementById('displayThanksName').innerText = `Thanks, ${name}!`;
+            document.getElementById('thanksMessage').classList.remove('hidden');
+        }
+
+        // --- PDF LOGIC (STAYED SAME FOR STABILITY) ---
         document.getElementById('mergeFiles').addEventListener('change', e => {
             const files = Array.from(e.target.files);
             if (files.length > 0) {
@@ -83,13 +148,11 @@
         function renderMergeList() {
             const list = document.getElementById('fileList');
             list.innerHTML = "";
-            
             if (selectedMergeFiles.length === 0) {
                 list.classList.add('hidden');
                 document.getElementById('clearAllBtn').classList.add('hidden');
                 return;
             }
-
             selectedMergeFiles.forEach((f, i) => {
                 const item = document.createElement('div');
                 item.className = "file-item";
@@ -106,15 +169,11 @@
                 `;
                 list.appendChild(item);
             });
-            
             new Sortable(list, { 
                 animation: 150, 
                 onEnd: () => {
                     const items = Array.from(list.children);
-                    const newOrder = items.map(item => {
-                        const idx = item.getAttribute('data-id');
-                        return selectedMergeFiles[idx];
-                    });
+                    const newOrder = items.map(item => selectedMergeFiles[item.getAttribute('data-id')]);
                     selectedMergeFiles = newOrder;
                     renderMergeList(); 
                 }
@@ -126,7 +185,6 @@
             renderMergeList();
         }
 
-        // UPDATED: No more confirmation popup
         function clearAllFiles() {
             selectedMergeFiles = [];
             renderMergeList();
@@ -139,8 +197,7 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const blob = new Blob([e.target.result], { type: 'application/pdf' });
-                const url = URL.createObjectURL(blob);
-                document.getElementById('pdfViewer').src = url;
+                document.getElementById('pdfViewer').src = URL.createObjectURL(blob);
                 document.getElementById('previewWrapper').classList.remove('hidden');
                 document.getElementById('previewWrapper').scrollIntoView({ behavior: 'smooth' });
             };
@@ -148,11 +205,10 @@
         }
 
         async function mergePDF() {
-            if (selectedMergeFiles.length < 2) return alert("Kam se kam 2 files select karein.");
+            if (selectedMergeFiles.length < 2) return alert("Select 2+ files.");
             const btn = document.getElementById('mergeBtn');
             btn.innerText = "MERGING...";
             btn.disabled = true;
-
             try {
                 const mergedPdf = await PDFDocument.create();
                 for (const file of selectedMergeFiles) {
@@ -161,20 +217,14 @@
                     const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
                     pages.forEach(p => mergedPdf.addPage(p));
                 }
-                const mergedPdfBytes = await mergedPdf.save();
-                download(mergedPdfBytes, "StrongPDF_Merged.pdf");
-            } catch (error) {
-                alert("Error merging PDFs.");
-            } finally {
-                btn.innerText = "MERGE FILES ⚡";
-                btn.disabled = false;
-            }
+                download(await mergedPdf.save(), "StrongPDF_Merged.pdf");
+            } catch (e) { alert("Error."); }
+            finally { btn.innerText = "MERGE FILES ⚡"; btn.disabled = false; }
         }
 
         async function splitAllPages() {
-            const fileInput = document.getElementById('splitFile');
-            const file = fileInput.files[0];
-            if (!file) return alert("Select a PDF.");
+            const file = document.getElementById('splitFile').files[0];
+            if (!file) return alert("Select PDF.");
             const btn = document.getElementById('splitBtn');
             btn.innerText = "SPLITTING...";
             try {
@@ -183,29 +233,27 @@
                     const newPdf = await PDFDocument.create();
                     const [p] = await newPdf.copyPages(src, [i]);
                     newPdf.addPage(p);
-                    const pdfBytes = await newPdf.save();
-                    download(pdfBytes, `Page_${i+1}_${file.name}`);
+                    download(await newPdf.save(), `Page_${i+1}_${file.name}`);
                 }
-            } catch (error) { alert("Error."); }
+            } catch (e) { alert("Error."); }
             finally { btn.innerText = "SPLIT ALL PAGES ⚡"; }
         }
 
         async function convertJpgToPdf() {
-            const fileInput = document.getElementById('jpgInput');
-            const files = Array.from(fileInput.files);
+            const files = Array.from(document.getElementById('jpgInput').files);
             if (files.length === 0) return alert("Select images.");
             const btn = document.getElementById('jpgBtn');
             btn.innerText = "CONVERTING...";
             try {
                 const pdfDoc = await PDFDocument.create();
                 for (const file of files) {
-                    const imgBytes = await file.arrayBuffer();
-                    let img = file.type === "image/png" ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
+                    const bytes = await file.arrayBuffer();
+                    let img = file.type === "image/png" ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
                     const page = pdfDoc.addPage([img.width, img.height]);
                     page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
                 }
                 download(await pdfDoc.save(), "StrongPDF_Images.pdf");
-            } catch (error) { alert("Error."); }
+            } catch (e) { alert("Error."); }
             finally { btn.innerText = "CONVERT IMAGES ⚡"; }
         }
 
@@ -217,6 +265,9 @@
             link.click();
             setTimeout(() => URL.revokeObjectURL(link.href), 100);
         }
+
+        function showPrivacy() { alert("100% Local Processing."); }
+        function showTerms() { alert("Free for everyone."); }
     </script>
 </body>
 </html>
